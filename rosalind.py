@@ -20,6 +20,41 @@ def main():
 		eval(function + '(sys.argv[1])')
 
 
+def rosalind_cons(filename):
+	records = list(SeqIO.parse(filename, "fasta"))
+	master = [ [0] * len(records[0].seq), [0] * len(records[0].seq), [0] * len(records[0].seq), [0] * len(records[0].seq) ]
+	for record in records:
+		for i in range(len(record.seq)):
+			if record.seq[i] == "A":
+				master[0][i] += 1
+			elif record.seq[i] == "C":
+				master[1][i] += 1
+			elif record.seq[i] == "G":
+				master[2][i] += 1
+			else:
+				master[3][i] += 1
+	consensus = ""
+	for i in range(len(master[0])):
+		total = master[0][i] + master[1][i] + master[2][i] + master[3][i]
+		if master[0][i]*4 > total:
+			consensus += "A"
+		elif master[1][i]*4 > total:
+			consensus += "C"
+		elif master[2][i]*4 > total:
+			consensus += "G"
+		else:
+			consensus += "T"
+	print(len(consensus) == len(records[0].seq))
+	print(len(consensus) == len(records[-1].seq))
+	f = open("results.txt", "w")
+	f.write(consensus)
+	f.write("\nA: {}".format(" ".join(str(x) for x in master[0])))
+	f.write("\nC: {}".format(" ".join(str(x) for x in master[1])))
+	f.write("\nG: {}".format(" ".join(str(x) for x in master[2])))
+	f.write("\nT: {}".format(" ".join(str(x) for x in master[3])))
+	f.close()
+
+
 def rosalind_fib(filename):
 	file = open(filename, "r")
 	data = file.read().split(" ")
